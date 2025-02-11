@@ -1,10 +1,4 @@
-/* const imprimirUsers = () => {
-    fetch("https://dummyjson.com/users")
-    .then(res => res.json())
-    .then(data => console.log(data));
-} */
-
-    let usuarios = [];
+let usuarios = [];
 
 const traerDatos = async () => {
   const res = await fetch("https://dummyjson.com/users");
@@ -12,6 +6,7 @@ const traerDatos = async () => {
   usuarios = data.users;
 
   imprimirUsers(usuarios);
+  cerrarModal();
 };
 
 traerDatos();
@@ -28,41 +23,17 @@ const imprimirUsers = (usuarios) => {
         <td >${usuario.age}</td>
         <td >${usuario.email}</td>
         <td >${usuario.username}</td>
-        <td >${usuario.image}</td>
+        
         <td>
-            <button onclick="editarUsuario(${usuario.id})"> Editar</button>
-            <button onclick="deleteUser(${usuario.id})"> Eliminar</button>
+            <button class="btn btn-sm btn-secondary" onclick="editarUsuario(${usuario.id})"> <i class="bi bi-pencil-square"></i></button>
+            <button class="text-danger btn btn-sm" onclick="deleteUser(${usuario.id})"> <i class="bi bi-trash danger"></i></button>
         </td>
     </tr>`;
     tbody.innerHTML += fila;
   });
 };
 
-/* const imprimirUserPorId = (idUser) => {
-    fetch("https://dummyjson.com/users/"+idUser.toString())
-    .then(res => res.json())
-    .then(data => console.log(data));
-} */
 
-const imprimirUserPorId = async (idUser) => {
-  const res = await fetch(`https://dummyjson.com/users/${idUser}`);
-  const data = await res.json();
-  console.log(data);
-};
-
-/* const crearUser = (nombre, apellido, edad) => {
-  fetch("https://dummyjson.com/users/add", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      firstName: nombre,
-      lastName: apellido,
-      age: edad,
-    }),
-  })
-    .then((res) => res.json())
-    .then((data) => console.log(data));
-}; */
 
 const crearUser = async (nombre, apellido, edad) => {
   const res = await fetch("https://dummyjson.com/users/add", {
@@ -75,24 +46,26 @@ const crearUser = async (nombre, apellido, edad) => {
     }),
   });
   const data = await res.json();
-  const usuarios = data.users;
-
-  imprimirUsers(usuarios);
-};
-
-/* const UpdateaUser = (nombre, apellido, edad) => {
-  fetch("https://dummyjson.com/users/1", {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
+  // Verificar si la respuesta es un usuario actualizado
+  if (data && data.firstName) {
+    console.log("Usuario creado:", data);
+      //Para que se refleje visualmente el nuevo usuario
+    const nuevoUsuario = {
+      id: usuarios.length + 1, // Generar un ID ficticio
       firstName: nombre,
       lastName: apellido,
       age: edad,
-    }),
-  })
-    .then((res) => res.json())
-    .then((data) => console.log(data));
-}; */
+    };
+    
+  usuarios.push(nuevoUsuario);
+  imprimirUsers(usuarios);
+    cerrarModal(); 
+  } else {
+    console.error("Error al crear el usuario:", data);
+  }
+};
+
+
 
 const updateUser = async (idUser, nombre, apellido, edad) => {
   const res = await fetch(`https://dummyjson.com/users/${idUser}`, {
@@ -109,20 +82,17 @@ const updateUser = async (idUser, nombre, apellido, edad) => {
   if (data && data.firstName) {
     console.log("Usuario actualizado:", data);
     
-    traerDatos();
+    // Actualizar usuario en memoria y visualmente
+  usuarios = usuarios.map(u =>
+    u.id === idUser ? { ...u, firstName: nombre, lastName: apellido, age: edad } : u
+  );
+  imprimirUsers(usuarios);
     cerrarModal(); 
   } else {
     console.error("Error al actualizar el usuario:", data);
   }
 };
 
-/* const deleteUser = (idUser) => {
-  fetch("https://dummyjson.com/users/" + idUser.toString(), {
-    method: "DELETE",
-  })
-    .then((res) => res.json())
-    .then((data) => console.log(data));
-}; */
 
 const deleteUser = async (idUser) => {
   const res = await fetch(`https://dummyjson.com/users/${idUser}`, {
@@ -132,8 +102,9 @@ const deleteUser = async (idUser) => {
   // Verificar si la eliminación fue exitosa
   if (data && data.id) {
     console.log("Usuario eliminado:", data);
-    traerDatos();
-    cerrarModal();
+    usuarios = usuarios.filter(u => u.id !== idUser); // Eliminar localmente
+  imprimirUsers(usuarios);
+   
   } else {
     console.error("Error al eliminar el usuario:", data);
   }
@@ -143,6 +114,8 @@ let usuarioEditarId = null;
 
 const editarUsuario = (id) => {
   // Recuperar los datos del usuario
+  document.getElementById("btnNuevoUsuario").style.display = "none";
+  document.getElementById("btnEditarUsuario").style.display = "block";
   const usuario = usuarios.find((u) => u.id === id);
 
   // Rellenar el modal con los datos
@@ -154,17 +127,52 @@ const editarUsuario = (id) => {
   usuarioEditarId = id;
 
   // Mostrar el modal
-  document.getElementById("modalEditar").style.display = "block";
+  mostrarModal();
 };
 
-const guardarEdicion = () => {
+const guardarEdicion = (e) => {
+  e.preventDefault();
   const nombre = document.getElementById("editFirstName").value;
   const apellido = document.getElementById("editLastName").value;
   const edad = document.getElementById("editAge").value;
+  
+ 
+    updateUser(usuarioEditarId, nombre, apellido, edad);
+  
 
-  updateUser(usuarioEditarId, nombre, apellido, edad);
+};
+
+const guardarNuevoUsuario = (e) => {
+  e.preventDefault();
+  const nombre = document.getElementById("editFirstName").value;
+  const apellido = document.getElementById("editLastName").value;
+  const edad = document.getElementById("editAge").value;
+  
+ 
+    crearUser(nombre, apellido, edad);
+  
+
 };
 
 const cerrarModal = () => {
   document.getElementById("modalEditar").style.display = "none";
 };
+
+const mostrarModal = () => {
+  document.getElementById("modalEditar").style.display = "block";
+}
+
+const crearUsuario = () => {
+  document.getElementById("editFirstName").value = "";
+  document.getElementById("editLastName").value = "";
+  document.getElementById("editAge").value = "";
+  document.getElementById("btnNuevoUsuario").style.display = "block";
+  document.getElementById("btnEditarUsuario").style.display = "none";
+  mostrarModal();
+
+};
+
+const btnNuevoUsuario = document.getElementById("btnNuevo");
+btnNuevoUsuario.addEventListener("click", crearUsuario);
+
+
