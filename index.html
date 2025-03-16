@@ -1,75 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CRUD con JavaScript y API</title>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <link rel="stylesheet" href="./css/style.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-</head>
-<body class="container">
-    <h1>Crear/Modificar usuarios</h1>
- <div class="card mt-2 shadow">
- <div class="card-header">
-<div class="row">
-<div class="col-4">
-Listado de usuarios
-</div>
-<div class="col-8 text-end">
-    <button class="btn btn-secondary float-right" id="btnNuevo">Nuevo Usuario</button>
-</div>
-</div>  
+    
+    <link rel="stylesheet" href="./css/style.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+  </head>
+  <body class="container bg-dark ">
+    <h1 >Crear/Modificar usuarios</h1>
+    <div class="card mt-2 shadow">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-4 x20">Listado de usuarios</div>
+          <div class="col-8 text-end">
+            <button data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-secondary float-right" id="btnNuevo">
+              Nuevo Usuario
+            </button>
+          </div>
+        </div>
+      </div>
 
-
- </div>
-
- <div class="card-body">
-    <div class="table-responsive">
-        <table class="table table-striped table-dark table-hover" id="tablaUsuarios">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table
+            class="table table-striped table-dark table-hover"
+            id="tablaUsuarios"
+          >
             <thead>
-                <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Apellido</th>
-                    <th scope="col">Edad</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Usuario</th>
-                    
-                    <th scope="col">Acciones</th>
-                </tr>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Apellido</th>
+                <th scope="col">Edad</th>
+                <th scope="col">Email</th>
+                <th scope="col">Usuario</th>
+
+                <th scope="col">Acciones</th>
+              </tr>
             </thead>
-            <tbody ></tbody>
-        </table>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
     </div>
- </div>
 
- </div>
-    
+   
 
- 
-    
+    <!-- Modal -->
+ <!-- Modal -->
+ <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header bg-dark">
+              <h5 class="modal-title text-white" id="exampleModalLabel">Nuevo usuario</h5>
+              <button id="btnEquis" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body bg-secondary">
+               <!-- Modal de Edición -->
+    <div class="card shadow" id="modalEditar">
+      <div class="card-body">
+        <!-- <input type="text" id="editFirstName" placeholder="Nombre" />
+        <input type="text" id="editLastName" placeholder="Apellido" />
+        <input type="number" id="editAge" placeholder="Edad" /> -->
 
-<!-- Modal de Edición -->
-<div class="card shadow" id="modalEditar">
-    <div class="card-body">
-        <input type="text" id="editFirstName" placeholder="Nombre">
-    <input type="text" id="editLastName" placeholder="Apellido">
-    <input type="number" id="editAge" placeholder="Edad">
-    <button id="btnNuevoUsuario" onclick="guardarNuevoUsuario(event)">Crear</button>
-    <button id="btnEditarUsuario" onclick="guardarEdicion(event)">Editar</button>
-    <button onclick="cerrarModal()">Cerrar</button>
+        <div class="col-12">
+          <dl class="row">
+            <dt class="col-4">Nombre</dt>
+            <dd class="col-8"><input type="text" id="editFirstName" placeholder="Nombre" /></dd>
+        
+            <dt class="col-4">Apellido</dt>
+            <dd class="col-8"><input type="text" id="editLastName" placeholder="Apellido" /></dd>
+        
+            <dt class="col-4">Edad</dt>
+            <dd class="col-8"><input type="number" id="editAge" placeholder="Edad" /></dd>
+        
+            <dt class="col-4">Email</dt>
+            <dd class="col-8"><input type="email" id="editEmail" placeholder="Email" /></dd>
+        
+            <dt class="col-4">Usuario</dt>
+            <dd class="col-8"><input type="text" id="editUsername" placeholder="Usuario" /></dd>
+        </dl>
+        </div>
+        
+        
+        
+        <div class="col-8 d-flex justify-content-around">
+          <button id="btnNuevoUsuario" class="btn btn-secondary" onclick="guardarNuevoUsuario(event)">
+            Crear
+          </button>
+          <button id="btnEditarUsuario" class="btn btn-secondary" onclick="guardarEdicion(event)">
+            Editar
+          </button>
+          <button class="btn btn-secondary" onclick="cerrarModal()">Cerrar</button>
+        </div>
+       
+      </div>
     </div>
-    
+              
+          </div>
+          <div class="modal-footer bg-dark">
+              <button id="cerrarModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+      </div>
   </div>
+</div>
+<!-- Fin Modal -->
 
-
-
-
-  
-
-
-<script src="js/app.js"></script>
-</body>
+    <!-- Fin modal -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+    <script src="js/app.js"></script>
+  </body>
 </html>
